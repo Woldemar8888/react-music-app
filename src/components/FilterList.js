@@ -1,20 +1,12 @@
-import {useState, useEffect} from 'react';
-import PlayList from './PlayList';
 
-function FilterList(){
-    
-    const[settings, setSettings] = useState({});
-
-    useEffect(()=>{
-        
-    });
-    
+function FilterList(props){
+  
     const setOptions = (e) => {
-        console.log(e.target.id);
-        console.log(e.target.value);
-        const obj = {...settings};
+        
+        const obj = {...props.filterSettings};
         obj[e.target.id] = e.target.value;
-        setSettings(obj);
+        props.setFilterSettings(obj);
+        console.log(obj);
     }
 
     return (

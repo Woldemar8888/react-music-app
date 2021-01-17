@@ -1,28 +1,33 @@
 import {useState, useEffect} from 'react';
 import SongRow from './SongRow';
 
-function PlayList(){
+function PlayList(props){
 
     const[songs, setSongs] = useState([]);
-    const[first, setFirst] = useState(false);
     const[page, setPage] = useState(1);
     const[portion, setPortion] = useState(10);
-    
    
     useEffect(()=>{
-       if(!first){
-              fetch("http://music", {
-                method: "POST" 
-            })
-            .then(response=>response.text())
-            .then(data=>{
-            
+        fetch("http://music", {
+            method: "POST",
+            headers: {
+                "Content-type": "text/plain"
+            },
+            body: JSON.stringify({'singers': props.filterSettings.singers,
+                                       'genres' : props.filterSettings.genres,
+                                       'years': props.filterSettings.years
+                      }) 
+        })
+        .then(response=>response.text())
+        .then(data=>{
+        try{
             data = JSON.parse(data);
-            setFirst(true);
-            setSongs(data);
-        });
-       }        
-    });
+                 setSongs(data);
+            }catch(e){
+                 console.log("error");
+            }       
+        });               
+},[props]);
     
 let songList = [];
 let pagitionList = [];
@@ -33,7 +38,7 @@ const paginationHandler =(e)=>{
  }
 
 for(let i = 0; i < songs.length; i++){
-    //6 arrays
+    
     if( i % portion === 0){
         songList.push([]);
     }

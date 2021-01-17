@@ -1,25 +1,41 @@
 <?php
+
 header("Access-Control-Allow-Origin: *");
+
 require_once 'connection.php';
 
+$text = file_get_contents('php://input');
+$assocArr = json_decode($text, true);
+$singers = $assocArr['singers'];
+$genres = $assocArr['genres'];
+$years = $assocArr['years'];
 
+$settingsArr = [$singers, $genres, $years];
 
-$link = mysqli_connect($host, $user, $password, $database) 
-    or die("Ошибка " . mysqli_error($link));
-	
-if(count($_POST) == 0){
-	$query ="SELECT * FROM songs LIMIT 10";
-	$result = mysqli_query($link, $query) or die("Ошибка " . mysqli_error($link)); 
-	if($result)
-	{
-    for ($data = []; $row = mysqli_fetch_assoc($result);
-    $data[] = $row);
-    $json = json_encode($data);
-    echo $json;
-
-	}
+if($singers =='all' && $genres=='all' && $years=='all'){
+	$stmt = $pdo->prepare("SELECT * FROM songs");
+	$stmt->execute();	
+}else{
+	$stmt = $pdo->prepare("SELECT * FROM songs".queryParser($settingsArr));
+	$stmt->execute(['GENRE' => $genres]);
 }
 
+$data = [];
+while ($str = $stmt->fetch()) {
+	$data[] = $str;
+}
+
+$json = json_encode($data);
+echo $json;
 
 
-mysqli_close($link);
+function queryParser($settingsArr){
+	$queryOption = " WHERE ";
+	
+	if($settingsArr[1] != 'all' ){
+		$queryOption = $queryOption.'GENRE = :GENRE';
+	}
+	return $queryOption;
+}
+
+?>
