@@ -3,10 +3,11 @@ import SongRow from './SongRow';
 
 function PlayList(){
 
-    const[songs, setSongs] = useState({});
+    const[songs, setSongs] = useState([]);
     const[first, setFirst] = useState(false);
     const[page, setPage] = useState(1);
     const[portion, setPortion] = useState(10);
+    
    
     useEffect(()=>{
        if(!first){
@@ -24,25 +25,47 @@ function PlayList(){
     });
     
 let songList = [];
+let pagitionList = [];
+let portionCount = Math.ceil(songs.length / portion);
+
+const paginationHandler =(e)=>{
+     setPage(e.target.value);                
+ }
+
 for(let i = 0; i < songs.length; i++){
-        songList.push(<SongRow
+    //6 arrays
+    if( i % portion === 0){
+        songList.push([]);
+    }
+    songList[Math.floor(i / portion )].push(<SongRow
                         key = {songs[i].SONG_ID}
                         singer = {songs[i].SINGER}
                         song = {songs[i].SONG}
                         genre = {songs[i].GENRE}
                         year = {songs[i].YEAR}
                       />
-        );
-    }
-    
+    );
+}
 
- const paginationHandler =(e)=>{
-     setPage(e.target.value);
-                    
- }
+ let startPage = page <=4 ? 0 : page - 4;
+ let endPage = (startPage + 4) <= portionCount ? startPage + 4 : portionCount;
+
+for(let i = startPage; i < endPage; i++){
+    pagitionList.push(<button
+            key= {i + 1}
+            onClick={paginationHandler}
+            className={+page === i + 1 ? "page-number activ" : "page-number"}
+            value= {i + 1}>{i+1}
+            </button>);
+}
+
+ 
 
  const portionHandler = (e)=>{
         setPortion(+e.target.value);
+        if(+e.target.value !== +portion){
+            setPage(1);
+        }   
  }
 
  const pageDown = () =>{
@@ -52,7 +75,7 @@ for(let i = 0; i < songs.length; i++){
  }
 
  const pageUp = () =>{
-        if(page < 4){
+        if(page < portionCount){
             setPage( +page + 1);
         }
  }
@@ -70,19 +93,14 @@ for(let i = 0; i < songs.length; i++){
                     </tr>
                 </thead>
                 <tbody>
-                    {songList[0]} 
+                    {songList[page - 1]} 
                 </tbody>
             </table>
             <div >
                 <div id="pagination">
                     <button onClick={pageDown} className="left-arrow">	&lt;</button>
-                    <button onClick={paginationHandler} className={+page ===1 ? "page-number activ" : "page-number"}  value="1">1</button>
-                    <button onClick={paginationHandler} className={+page ===2 ? "page-number activ" : "page-number"}  value="2">2</button>
-                    <button onClick={paginationHandler} className={+page ===3 ? "page-number activ" : "page-number"}  value="3">3</button>
-                    <button onClick={paginationHandler} className={+page ===4 ? "page-number activ" : "page-number"}  value="4">4</button>
+                    {pagitionList}
                     <button onClick={pageUp} className="right-arrow" >&gt;</button>
-                    
-          
                 </div>
                 <div id="count-panell">
                     <button onClick={portionHandler} value="10" className={portion ===10 ? "activ":""}>10</button>
