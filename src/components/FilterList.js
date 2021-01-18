@@ -6,7 +6,6 @@ function FilterList(props){
         const obj = {...props.filterSettings};
         obj[e.target.id] = e.target.value;
         props.setFilterSettings(obj);
-        console.log(obj);
     }
 
     return (
@@ -44,7 +43,6 @@ function FilterList(props){
                     </select>
                 </div>   
             </div>
-
         </div>
     );
 }

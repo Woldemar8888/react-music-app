@@ -12,8 +12,6 @@ $years = $assocArr['years'];
 $firstLetter = $singers[0];
 $lastLetter = $singers[2];
 
-$settingsArr = [$singers, $genres, $years];
-
 if($singers == 'all' && $genres == 'all' && $years == 'all'){
 	$stmt = $pdo->prepare("SELECT * FROM songs");
 	$stmt->execute();	
@@ -44,11 +42,50 @@ if($singers == 'all' && $genres == 'all' && $years == 'all'){
         }   
     }
 }else if($singers != 'all' && $genres == 'all' && $years != 'all'){
-    
+    if($years == 'before50'){
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR<:YEAR AND LEFT(SINGER, 1)>=:FIRST AND LEFT(SINGER, 1)<=:LAST");
+	    $stmt->execute(['YEAR' => 1950, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter ]);
+    }else if($years == 'after00'){
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR>:YEAR LEFT(SINGER, 1)>=:FIRST AND LEFT(SINGER, 1)<=:LAST");
+	    $stmt->execute(['YEAR' => 2000, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter]);
+    }else{
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR>=:FROM AND YEAR<=:TO AND LEFT(SINGER, 1)>=:FIRST AND LEFT(SINGER, 1)<=:LAST" );
+        if($years =='50-80'){
+           $stmt->execute(['FROM' => 1950, 'TO'=>1980, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter]); 
+        }else{
+           $stmt->execute(['FROM' => 1981, 'TO'=>2000, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter]); 
+        }   
+    }
 }else if($singers == 'all' && $genres != 'all' && $years != 'all'){
-    
+    if($years == 'before50'){
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR<:YEAR AND GENRE=:GENRE");
+	    $stmt->execute(['YEAR' => 1950, 'GENRE' => $genres]);
+    }else if($years == 'after00'){
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR>:YEAR AND GENRE=:GENRE");
+	    $stmt->execute(['YEAR' => 2000, 'GENRE' => $genres]);
+    }else{
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR>=:FROM AND YEAR<=:TO AND GENRE=:GENRE" );
+        if($years =='50-80'){
+           $stmt->execute(['FROM' => 1950, 'TO'=>1980, 'GENRE' => $genres]); 
+        }else{
+           $stmt->execute(['FROM' => 1981, 'TO'=>2000, 'GENRE' => $genres]); 
+        }   
+    }
 }else{
-    
+    if($years == 'before50'){
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR<:YEAR AND LEFT(SINGER, 1)>=:FIRST AND LEFT(SINGER, 1)<=:LAST AND GENRE=:GENRE");
+	    $stmt->execute(['YEAR' => 1950, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter, 'GENRE' => $genres ]);
+    }else if($years == 'after00'){
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR>:YEAR LEFT(SINGER, 1)>=:FIRST AND LEFT(SINGER, 1)<=:LAST AND GENRE=:GENRE");
+	    $stmt->execute(['YEAR' => 2000, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter, 'GENRE' => $genres]);
+    }else{
+        $stmt = $pdo->prepare("SELECT * FROM songs WHERE YEAR>=:FROM AND YEAR<=:TO AND LEFT(SINGER, 1)>=:FIRST AND LEFT(SINGER, 1)<=:LAST AND GENRE=:GENRE" );
+        if($years =='50-80'){
+           $stmt->execute(['FROM' => 1950, 'TO'=>1980, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter, 'GENRE' => $genres]); 
+        }else{
+           $stmt->execute(['FROM' => 1981, 'TO'=>2000, 'FIRST' => $firstLetter, 'LAST'=> $lastLetter, 'GENRE' => $genres]); 
+        }   
+    }
 }
 
 $data = [];
