@@ -8,14 +8,16 @@ function PlayList(props){
     const[portion, setPortion] = useState(10);
    
     useEffect(()=>{
-        fetch("http://music", {
+        fetch("https://woldemar.h1n.ru/music/", {
             method: "POST",
             headers: {
                 "Content-type": "text/plain"
             },
             body: JSON.stringify({'singers': props.filterSettings.singers,
-                                       'genres' : props.filterSettings.genres,
-                                       'years': props.filterSettings.years
+                                  'genres' : props.filterSettings.genres,
+                                  'years': props.filterSettings.years,
+                                  'sort': props.filterSettings.sort,
+                                  'direction': props.filterSettings.direction
                       }) 
         })
         .then(response=>response.text())
@@ -85,16 +87,131 @@ for(let i = startPage; i < endPage; i++){
         }
  }
 
+ const sort = (e) => {
+    let obj = {...props.filterSettings};
+    obj.sort = e.target.value;
+    obj.direction = e.target.getAttribute('direction');
+    props.setFilterSettings(obj);
+ }
+
+ const changeDirection = (e) =>{
+    let obj = {...props.filterSettings};
+    let direction = obj.direction;
+    direction = obj.direction === 'up' ? 'down' : 'up';
+    obj.direction = direction;
+    props.setFilterSettings(obj);
+ }
+
     return (
         <div className ="playlist">
             <div className="playlist-title">Плейлист</div>
             <table>
                 <thead>
                     <tr>
-                        <th id="singer">Исполнитель</th>
-                        <th id="song">Песня</th>
-                        <th id="genre">Жанр</th>
-                        <th id="year">Год</th>
+                        <th id="singer">
+                            Исполнитель
+                            <span className="sortArrows">
+                                {props.filterSettings.sort === 'singer' ? 
+                                    <button 
+                                        value="singer"
+                                        className="activ"
+                                        direction={props.filterSettings.direction === 'up' ? 'up' : 'down'}
+                                        onClick={changeDirection}>{props.filterSettings.direction === 'up' ? <>&#9650;</> : <>&#9660;</>}
+                                    </button>
+                                    :
+                                    <>
+                                    <button 
+                                        value="singer"
+                                        direction="up"
+                                        onClick={sort}>&#9650;
+                                    </button>
+                                    <button
+                                        value="singer"
+                                        direction="down"
+                                        onClick={sort}>&#9660;
+                                    </button>
+                                    </>
+                                }
+                            </span>
+                        </th>
+                        <th id="song">
+                            Песня
+                            <span className="sortArrows">
+                                {props.filterSettings.sort === 'song' ? 
+                                    <button 
+                                        value="song"
+                                        className="activ"
+                                        direction={props.filterSettings.direction === 'up' ? 'up' : 'down'}
+                                        onClick={changeDirection}>{props.filterSettings.direction === 'up' ? <>&#9650;</> : <>&#9660;</>}
+                                    </button>
+                                    :
+                                    <>
+                                    <button 
+                                        value="song"
+                                        direction="up"
+                                        onClick={sort}>&#9650;
+                                    </button>
+                                    <button
+                                        value="song"
+                                        direction="down"
+                                        onClick={sort}>&#9660;
+                                    </button>
+                                    </>
+                                }
+                            </span>
+                        </th>
+                        <th id="genre">
+                            Жанр
+                            <span className="sortArrows">
+                                {props.filterSettings.sort === 'genre' ? 
+                                    <button 
+                                        value="genre"
+                                        className="activ"
+                                        direction={props.filterSettings.direction === 'up' ? 'up' : 'down'}
+                                        onClick={changeDirection}>{props.filterSettings.direction === 'up' ? <>&#9650;</> : <>&#9660;</>}
+                                    </button>
+                                    :
+                                    <>
+                                    <button 
+                                        value="genre"
+                                        direction="up"
+                                        onClick={sort}>&#9650;
+                                    </button>
+                                    <button
+                                        value="genre"
+                                        direction="down"
+                                        onClick={sort}>&#9660;
+                                    </button>
+                                    </>
+                                }
+                            </span>
+                        </th>
+                        <th id="year">
+                            Год
+                            <span className="sortArrows">
+                                {props.filterSettings.sort === 'year' ? 
+                                    <button 
+                                        value="year"
+                                        className="activ"
+                                        direction={props.filterSettings.direction === 'up' ? 'up' : 'down'}
+                                        onClick={changeDirection}>{props.filterSettings.direction === 'up' ? <>&#9650;</> : <>&#9660;</>}
+                                    </button>
+                                    :
+                                    <>
+                                    <button 
+                                        value="year"
+                                        direction="up"
+                                        onClick={sort}>&#9650;
+                                    </button>
+                                    <button
+                                        value="year"
+                                        direction="down"
+                                        onClick={sort}>&#9660;
+                                    </button>
+                                    </>
+                                }
+                            </span>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
